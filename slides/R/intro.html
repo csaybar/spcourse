@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geocomputación con R</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Cesar Aybar Camacho" />
+    <meta name="date" content="2018-09-18" />
+    <link rel="stylesheet" href="my-theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Geocomputación con R
+## Nivel Básico
+### Cesar Aybar Camacho
+### 2018-09-18
+
+---
+
+
+
+
+
+layout: true
+background-image: url(img/r_geocomp_background.png)
+background-size: cover
+
+
+---
+Estas slides están basadas en gran parte del trabajo de Jannes Muenchow y Robin Lovelace.
+Usted puede revisar las slides originales en **ingles** [ERUM](https://github.com/jannes-m/erum18_geocompr).
+&lt;br&gt;
+&lt;br&gt;
+Una copia de su fántastico libro lo puede encontrar en [aquí](https://geocompr.robinlovelace.net/).
+
+---
+# Encuentre las slides y el código
+&lt;br&gt;
+https://github.com/jannes-m/erum18_geocompr
+&lt;br&gt;
+&lt;br&gt;
+&lt;font size="5"&gt; Antes de empezar ...&lt;/font&gt;
+&lt;br&gt;
+&lt;br&gt;
+Por favor  instale  las siguientes librerías:
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+install.packages(c("RCurl","sf", "raster", "gstat","automap",
+                   "tidyverse","mapview","units","tidyverse",
+                   "raster","velox","gstat"))
+```
+
+---
+layout: false
+
+# Tabla de Contenido
+
+&lt;figure&gt;
+&lt;img align="right" src="img/globe.png" width = "60%", height = "60%"/&gt;
+&lt;/figure&gt;
+
+&lt;br&gt;
+&lt;br&gt;
+
+- &lt;font size="4"&gt; Aprender sobre nuevas tendencias en el manejo de datos espaciales&lt;/font&gt;
+&lt;div style="margin-bottom:20px;"&gt; &lt;/div&gt;
+
+- &lt;font size="4"&gt; Rasters en R &lt;/font&gt;
+&lt;div style="margin-bottom:20px;"&gt; &lt;/div&gt;
+
+- &lt;font size="4"&gt;Vectores en R &lt;/font&gt;
+&lt;div style="margin-bottom:20px;"&gt; &lt;/div&gt;
+
+- &lt;font size="4"&gt; Como se realiza análisis espacial en R&lt;/font&gt;
+&lt;div style="margin-bottom:20px;"&gt; &lt;/div&gt;
+
+- &lt;font size="4"&gt; Geoestadística (teoría y práctica)&lt;/font&gt;
+&lt;div style="margin-bottom:20px;"&gt; &lt;/div&gt;
+
+
+&lt;br&gt;
+&lt;br&gt;
+
+**Cualquier pregunta es valida si tiene que ver con R (Python) o datos espaciales**
+
+---
+
+layout: true
+background-image: url(img/r_geocomp_background.png)
+background-size: cover
+---
+
+# Que es un SIG?
+&lt;figure&gt;
+&lt;img align="right" src="img/gis_logos.png" width = "40%", height = "40%"/&gt;
+&lt;/figure&gt;
+&lt;br&gt;
+
+- Un **S**istema de **I**nformación **G**eográfica es un sistema para analizar, manipular y vizualizar información geográfica (Longley, Goodchild, Maguire, and Rhind, 2015)
+
+--
+
+- Seis componentes de un SIG: software, datos, procedimientos, hardware, gente y redes.
+
+--
+
+- Paquetes de software SIG típicos: **QGIS**, SAGA-GIS, GRASS-GIS, ArcMap (commercial)
+
+---
+# R vs Python en análisis espacial
+
+### R
+--
+
+- Mejor soporte para objetos espaciales
+- Amplia gamma de modelos estadísticos
+- sf, gstat, sp, raster, velox, geoR
+
+--
+
+### Python
+
+--
+
+- Es un lenguaje multipropósito.
+- Soporte en casi todos los sofwares GIS
+- geopandas, PyGeoProcessing, osgeo, tensorflow
+
+--
+---
+# Datos espaciales
+
+&lt;br&gt;
+&lt;br&gt;
+
+- Los datos espaciales consisten de **coordenadas-xy** junto a **atributos** (esto puede incluir una marca de tiempo, de lo contrario, los datos son estáticos).
+
+--
+
+-  Por lo general, ignoramos la curvatura de la Tierra al visualizar datos geográficos.
+
+--
+
+- Los datos geográficos son una representación simplificada del mundo. Nosotros decidimos qué exhibimos, cómo y para qué propósito.
+
+--
+
+- Los datos geográficos pueden convertirse rápidamente en grandes.
+
+--
+
+- Dos modelos de datos comúnes para representar datos espaciales son: el modelo espacial **vector** y **raster**.
+
+---
+
+# Modelo vectorial
+
+
+&lt;figure&gt;
+&lt;img align="right" src="img/vector.png" width = "60%", height = "60%"/&gt;
+&lt;/figure&gt;
+
+-   Objetos discretos representados por puntos.
+
+--
+
+- Tres principales subtipos: puntos, lineas and polígonos.
+
+--
+
+- Especialmente adecuado para objetos con bordes bien definidos (lagos, casas, calles, etc).
+
+--
+
+- Tabla de atributos.
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+Puede leer más en: [https://geocompr.robinlovelace.net/spatial-class.html#vector-data](https://geocompr.robinlovelace.net/spatial-class.html#vector-data)
+---
+
+# Modelo raster
+
+
+&lt;figure&gt;
+&lt;img align="right" src="img/raster.png" width = "50%", height = "50%"/&gt;
+&lt;/figure&gt;
+
+- Campos continuos representados por celdas.
+
+--
+
+- Un solo atributo por cada celda.
+
+--
+
+- Especialmente adecuado para datos continuos sin bordes agudos (elevación, precipitación)
+
+--
+
+- Estructura: encabezado de ráster (origen, resolución, ncol, nrow, crs, NAvalue) y matriz que contiene los datos.
+
+--
+
+- Algebra de mapas.
+
+--
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+Puede leer más en: [https://geocompr.robinlovelace.net/spatial-class.html#raster-data](https://geocompr.robinlovelace.net/spatial-class.html#raster-data)
+
+---
+
+# Cabecera Raster
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img src="img/raster_header.png" width = "100%", height = "100%"/&gt;
+&lt;/figure&gt;
+---
+class: inverse, center, middle
+
+# Una breve introducción sobre CRS
+
+---
+# Sistemas de Referencia de Coordenadas
+
+Utilizamos Sistemas de Referencia de Coordenadas (CRS, por sus siglas en ingles) para ubicar nuestros datos geográficos en la Tierra.
+
+We distinguish between:
+
+- Los CRS **geográficos**.
+- Los CRS **proyectados**.
+---
+
+# CRS geográfico
+
+.pull-left[
+- Usualmente en grados decimales.
+- WGS-84 es lo más común.
+- Ideal para ubicar un lugar en la Tierra.
+- Lo mejor para el análisis global.
+- Menos adecuado si quieres medir la distancia.
+]
+
+
+
+.pull-right[
+&lt;img  src="https://geocompr.robinlovelace.net/figures/vector_lonlat.png" width = "90%", height = "90%"/&gt;
+&lt;figcaption &gt;Source: &lt;a href="https://geocompr.robinlovelace.net/spatial-class.html"&gt;Geocomputation with R&lt;/a&gt;.&lt;/figcaption&gt;
+ &lt;/figure&gt;
+ ]
+---
+# CRS geográfico
+
+
+.pull-left[
+- Usualmente en grados decimales.
+- WGS-84 es lo más común.
+- Ideal para ubicar un lugar en la Tierra.
+- Lo mejor para el análisis global.
+- Menos adecuado si quieres medir la distancia.
+- Mayor distorsión en los polos.
+]
+
+.pull-right[
+![](intro_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+]
+???
+difference 1 decimal degree at the equator and at the poles
+---
+
+
+# CRS Proyectado
+- Las proyecciones espaciales **aplanan** la forma tridimensional de la Tierra en un plano 2D
+- Especialmente adecuado para el análisis **local**.
+
+
+
+.pull-right[
+&lt;figure&gt;
+&lt;img  src="img/spatial-projection-transformations-crs.png" width = "90%", height = "90%"/&gt;
+&lt;figcaption&gt;Source: &lt;a href="http://progonos.com/furuti/"&gt;progonos.com/furuti/&lt;/a&gt; &lt;/figcaption&gt;
+&lt;/figure&gt;
+]
+
+--
+&lt;br&gt; 
+Puede leer más en:
+- [Gecomputation with R - Projections](https://geocompr.robinlovelace.net/transform.html#reproj-geo-data)
+- [QGIS CRS documentation](https://docs.qgis.org/2.14/en/docs/gentle_gis_introduction/coordinate_reference_systems.html)
+- [Earth Data Science CRS](https://earthdatascience.org/courses/earth-analytics/spatial-data-r/intro-to-coordinate-reference-systems/)
+
+---
+class: inverse, center, middle
+
+# Breve historía sobre R-spatial
+---
+
+# Breve historía sobre R-spatial
+
+- Paquetes espaciales ya disponibles en el lenguaje S desde la década de 1990 (Bivand and Gebhardt, 2000)
+&lt;br&gt;
+--
+
+- En 2000, las modificaciones de estos se convirtieron en paquetes R para el análisis de patrones de puntos, geoestadística, análisis de datos espaciales exploratorios y econometría espacial (aún mucho paquetes dispersos).
+&lt;br&gt;
+--
+
+- R-GIS bridges (Bivand, 2000)
+&lt;br&gt;
+--
+
+- Bivand (2003) propuso un sistema de clase de datos espaciales para R que eventualmente condujo a los paquetes **rgdal** (first released in 2003; Bivand, Keitt, and Rowlingson, 2018) y **sp** (first released in 2005; Bivand, Pebesma, and Gomez-Rubio, 2013)
+&lt;br&gt;
+--
+
+- 2008: Análisis aplicado de datos espaciales con R(Bivand, Pebesma, and Gomez-Rubio, 2013)
+&lt;br&gt;
+--
+
+- 2010: paquete **raster** (Hijmans, 2017)
+&lt;br&gt;
+--
+
+- 2011: paquete **rgeos** (Bivand and Rundel, 2017)
+&lt;br&gt;
+--
+
+- 2016-17: **sf** - simple features para R (Pebesma, 2018a)
+&lt;br&gt;
+--
+
+- 2017-18: **stars** - *spatiotemporal tidy arrays* para R (Pebesma, 2018b)
+&lt;br&gt;
+--
+&lt;br&gt;
+
+Puede leer más en: [https://geocompr.robinlovelace.net/intro.html#the-history-of-r-spatial](https://geocompr.robinlovelace.net/intro.html#the-history-of-r-spatial)
+---
+class: small
+# References
+Bivand, Roger (2003). "Approaches to Classes for Spatial Data in
+R". In: _Proceedings of DSC_. Ed. by Kurt Hornik, Friedrich Leisch
+and Achim Zeileis. URL:
+[https://www.r-project.org/nosvn/conferences/DSC-2003/Proceedings/Bivand.pdf](https://www.r-project.org/nosvn/conferences/DSC-2003/Proceedings/Bivand.pdf)
+(visited on Jun. 27, 2017).
+
+Bivand, Roger S. (2000). "Using the R Statistical Data Analysis
+Language on GRASS 5.0 GIS Database Files". In: _Computers &amp;
+Geosciences_ 26.9, pp. 1043-1052. URL:
+[http://www.sciencedirect.com/science/article/pii/S0098300400000571](http://www.sciencedirect.com/science/article/pii/S0098300400000571)
+(visited on Jul. 11, 2017).
+
+Bivand, Roger S, Edzer Pebesma and Virgilio Gomez-Rubio (2013).
+_Applied Spatial Data Analysis with R_. 2nd ed.. New York:
+Springer. 405 pp. ISBN: 978-1-4614-7617-7.
+
+Bivand, Roger and Albrecht Gebhardt (2000). "Implementing
+Functions for Spatial Statistical Analysis Using the Language".
+In: _Journal of Geographical Systems_ 2.3, pp. 307-317. URL:
+[http://www.springerlink.com/index/CJRPUMB78JUYH54W.pdf](http://www.springerlink.com/index/CJRPUMB78JUYH54W.pdf)
+(visited on Jul. 12, 2017).
+
+Bivand, Roger, Tim Keitt and Barry Rowlingson (2018). _Rgdal:
+Bindings for the 'Geospatial' Data Abstraction Library_. R package
+version 1.2-18. URL:
+[https://CRAN.R-project.org/package=rgdal](https://CRAN.R-project.org/package=rgdal).
+
+Bivand, Roger and Colin Rundel (2017). _Rgeos: Interface to
+Geometry Engine - Open Source ('GEOS')_. R package version 0.3-26.
+URL:
+[https://CRAN.R-project.org/package=rgeos](https://CRAN.R-project.org/package=rgeos).
+
+Hijmans, Robert J. (2017). _Raster: Geographic Data Analysis and
+Modeling_. R package version 2.6-7. URL:
+[https://CRAN.R-project.org/package=raster](https://CRAN.R-project.org/package=raster).
+
+Longley, Paul, Michael Goodchild, David Maguire, et al. (2015).
+_Geographic Information Science &amp; Systems_. Fourth edition.
+Hoboken, NJ: Wiley. 477 pp. ISBN: 978-1-118-67695-0.
+
+Pebesma, Edzer (2018a). _Sf: Simple Features for R_. R package
+version 0.6-2. URL:
+[https://CRAN.R-project.org/package=sf](https://CRAN.R-project.org/package=sf).
+
+Pebesma, Edzer (2018b). _Stars: Scalable, Spatiotemporal Tidy
+Arrays for R_. R package version 0.1-1. URL:
+[https://github.com/r-spatial/stars/](https://github.com/r-spatial/stars/).
+---
+# Simple features in R
+
+**_Simple features_** es un [estandar ISO](http://www.opengeospatial.org/standards/sfa) ampliamente utilizado. Edzer Pebesma implementó **simple featuress** en R a través del paquete sf.
+--
+
+```r
+data(random_points, package = "RQGIS")
+class(random_points)
+```
+
+```
+## [1] "sf"         "data.frame"
+```
+**sf** carga automaticamente [GEOS](https://trac.osgeo.org/geos/), [GDAL](http://www.gdal.org/) y [Proj.4](https://proj4.org/).
+--
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img src="img/gis_I.png" width = "75%", height = "75%"/&gt;
+&lt;/figure&gt;
+Para más información leer [https://geocompr.robinlovelace.net/spatial-operations.html#spatial-vec](https://geocompr.robinlovelace.net/spatial-operations.html#spatial-vec)
+--
+---
+# Operaciones geométricas en sf
+¿Qué ocurre si queremos la intersección geométrica de dos objetos espaciales superpuestos en lugar de un vector booleano?
+--
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img src="img/venn-clip-1.png" width = "100%", height = "100%"/&gt;
+&lt;/figure&gt;
+---
+---
+class: inverse, center, middle
+
+  # Ejercicio N°1:  Delimitación Pfafstetter a escala nacional en cualquier nivel!
+  
+---
+# Sistema de Clasificación Pfafstetter
+&lt;br&gt;
+&lt;br&gt;
+
+.pull-center[
+&lt;figure&gt;
+&lt;img  src="img/pasteter.jpg" width = "110%", height = "90%"/&gt;
+&lt;figcaption&gt;Source: &lt;a href="https://ponce.sdsu.edu/"&gt; ponce.edu.com &lt;/a&gt; &lt;/figcaption&gt;
+&lt;/figure&gt;
+]
+
+
+---
+# 1._ Decargamos los datos
+&lt;br&gt;
+&lt;br&gt;
+Por favor  descarge los datos y descomprimalos!
+
+#### Mediante R:
+
+
+```r
+library(RCurl)
+url = 'https://storage.googleapis.com/rclass/shp.tar.gz'
+output = paste0('/home/aybarpc01/Downloads/',basename(url))
+download.file(url,output)
+```
+
+#### Mediante clicks!!:
+
+https://storage.googleapis.com/rclass/shp.tar.gz
+
+---
+# 2._ Librerias
+
+&lt;br&gt;
+&lt;br&gt;
+Revise que todas las liberias esten conrrectamente instaladas!
+&lt;br&gt;
+
+
+```r
+library(RCurl) # wrapper para libcurl (libraria para manejo de HTTP y FTP)
+library(sf) # Simple features in R
+library(mapview) # Mapas interactivos en R
+library(units) # Manejo de unidades (eg. m^2 or km^2)
+library(tidyverse) #Framework para manipulacion y vizualisacion de datos
+library(raster) # Manjeo de Rasters en R
+library(velox) # C++ (Rcpp) para la manipulacion de objetos Raster
+library(gstat) # Geoestadistica en R
+```
+---
+# 3._ Leeamos los shapefiles
+&lt;br&gt;
+&lt;br&gt;
+
+
+```r
+# 3.1 Ruta donde se encuentran los shapefiles
+
+define_dir = '/home/aybarpc01/Downloads/shp/'
+setwd(define_dir)
+
+# 3.2 Cargando los shapefiles en memoria (RAM)
+
+Hsheds = read_sf('hybas_lake_sa_lev09_v1c.shp')
+Asheds = read_sf('UH.shp')
+```
+---
+# 4._ Obtenemos información de los shapefiles
+
+
+
+```r
+names(Hsheds)
+```
+
+```
+##  [1] "HYBAS_ID"  "NEXT_DOWN" "NEXT_SINK" "MAIN_BAS"  "DIST_SINK"
+##  [6] "DIST_MAIN" "SUB_AREA"  "UP_AREA"   "PFAF_ID"   "SIDE"     
+## [11] "LAKE"      "ENDO"      "COAST"     "ORDER"     "SORT"     
+## [16] "geometry"
+```
+
+```r
+names(Asheds)
+```
+
+```
+##  [1] "OBJECTID"   "ID"         "NIVEL1"     "NIVEL2"     "NIVEL3"    
+##  [6] "NIVEL4"     "NIVEL5"     "NIVEL6"     "NIVEL7"     "NOMB_UH_N1"
+## [11] "NOMB_UH_N2" "NOMB_UH_N3" "NOMB_UH_N4" "NOMB_UH_N5" "NOMB_UH_N6"
+## [16] "NOMB_UH_N7" "CODIGO"     "NOMBRE"     "ORDEN"      "AREA_KM2"  
+## [21] "Shape_Leng" "Shape_Area" "geometry"
+```
+---
+# 5._ HydroSHEDs solo Perú
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+
+```r
+# Seleccione solo las cuencas peruanas de Hsheds
+inters = st_intersects(Hsheds,Asheds) %&gt;% as_tibble(.) %&gt;% '[['(1)
+HPsheds = Hsheds[inters,]
+HPsheds = HPsheds['PFAF_ID']
+plot(HPsheds['PFAF_ID'])
+```
+
+&lt;br&gt;
+&lt;br&gt;
+Más de 70000&gt; **geometry features** procesados en tan solo ~10 seg.
+
+---
+### 6._ Agrupamiento de las geometrias según el sistema de codigos Pfafstetter
+
+Para entender el sistema de códigos Pfafstetter revise __**HydroBASINS_TechDoc_v1c.pdf**__.
+
+
+```r
+HydroBASINS_lvl = function(hbasin_shp,lvl) {
+  hbasin_shp %&gt;% mutate(PFAF_ID = substr(PFAF_ID,1,lvl)) %&gt;% group_by(PFAF_ID) %&gt;% 
+    summarise_all(funs(mean))
+}
+```
+
+&lt;br&gt;
+Vizualizacion del nivel 3
+&lt;br&gt;
+
+
+```r
+HydroBASINS_3 = HydroBASINS_lvl(HPsheds,3)
+HydroBASINS_5 = HydroBASINS_lvl(HPsheds,5)
+plot(HydroBASINS_3)
+plot(HydroBASINS_5)
+```
+---
+
+# 7._ Filter usando **sf**
+
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+basin_area = set_units(st_area(HydroBASINS_3),km^2)
+thershold = units::set_units(2000, km^2)
+HydroBASINS_3 = HydroBASINS_3 %&gt;% mutate(area = basin_area) 
+HydroBASINS_3_elm = HydroBASINS_3  %&gt;% filter(area &gt; thershold) %&gt;%   st_buffer(.000001)
+plot(HydroBASINS_3_elm[1])
+```
+
+&lt;br&gt;
+Como se puede dar cuenta **sf** extiende las funcionalidades de **tydiverse** al manejo de datos espaciales. Algo parecido a **geopandas** en *python*.
+
+---
+
+
+&lt;br&gt;
+&lt;br&gt;
+
+### Para más información de **sf** revise los siguientes links:
+
+- https://www.jessesadler.com/post/gis-with-r-intro/
+
+- https://edzer.github.io/UseR2017/
+
+- https://www.r-spatial.org/r/2017/01/12/newssf.html
+
+- https://www.r-spatial.org/r/2016/07/18/sf2.html
+
+- https://www.jessesadler.com/post/simple-feature-objects/
+
+
+---
+class: inverse, center, middle
+
+### Ejercicio N°2:  Genere un mapa de precipitación promedio (81-10) para cada mes y para todas las cuencas del Perú según ANA.
+  
+---
+# 1. Descargemos los datos de PISCOp (I)
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+**1.1 Definimos la ruta **
+&lt;br&gt;
+
+```r
+ftp = 'ftp://publi_dgh2:123456@ftp.senamhi.gob.pe'
+route = 'PISCOp_V2.1_beta/PISCOp_climatology/PISCOp_climatology/'
+myURL = sprintf('%s/%s',ftp,route)
+```
+&lt;br&gt;
+**1.2 getURL: nos permite manipular URI's**
+&lt;br&gt;
+
+```r
+filenames &lt;- getURL(myURL, ftp.use.epsv = FALSE, ftplistonly=TRUE, crlf=TRUE)
+files = strsplit(filenames, "\n")[[1]]
+PISCOfiles &lt;- sprintf('%s/%s',myURL,files)
+```
+---
+# 1. Descargemos los datos de PISCOp (II)
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+**1.3 Creando nombres de salida**
+&lt;br&gt;
+
+```r
+name_dir &lt;- '/home/aybarpc01/Documents/Rclass_2/example/'
+dir.create(name_dir)
+output_file &lt;- sprintf('%s/%s',name_dir,files)
+```
+&lt;br&gt;
+
+```r
+mapply(download.file,PISCOfiles,output_file)
+```
+---
+# 2. Creación de un Raster object
+
+Existen 3 tipos:
+- **RasterLayer:** Matrix object enriquecido para el soporte de análisis espacial.
+- **RasterStack:** Collecion de RasterLayer con las misma dimension y extension (MultiLevel Pointer).
+- **RasterBrick:** Objeto de multiple capas (One Pointer)
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+
+```r
+list_raster = list.files(name_dir,'\\.tif$',full.names = TRUE)
+stk_R = stack(list_raster)  #stack
+brk_R = brick(stk_R) #brick  
+plot(brk_R)
+```
+ 
+---
+### 3. Metodos disponibles en RasterLayer,  RasterStack o RasterBrick (I)
+&lt;br&gt;
+&lt;br&gt;
+- **mask(Rojb,shp):** Devuelve un raster **enmarcado**  por los limites de otro objeto espacial (vectorial/raster) de referencia.
+
+- **crop(Rojb,shp):** Devuelve un raster **recortado** en base una extensión de referencia.
+
+- **extract(Robj,shp):** Devuelve un vector númerico o un objeto sp.
+
+- **writeRaster(Rojb,output):** Guardar cambios en rasters.
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+Para obtener información de los  disponibles en los objetos *Raster** de clic [aqui](https://cran.r-project.org/web/packages/raster/vignettes/Raster.pdf)
+---
+### 3. Metodos disponibles en RasterLayer,  RasterStack o RasterBrick (II)
+&lt;br&gt;
+- mask() ejemplo:
+
+
+```r
+hb3_prec = mask(brk_R,HydroBASINS_3_elm)
+plot(hb3_prec)
+```
+
+- crop() ejemplo:
+
+
+```r
+hb3_prec = crop(brk_R,HydroBASINS_3_elm)
+plot(hb3_prec)
+```
+
+- extract() ejemplo:
+
+
+
+```r
+hb3_prec = crop(brk_R,HydroBASINS_3_elm,fun=mean)
+plot(hb3_prec)
+```
+---
+# 4. Velox?
+
+[Fast raster extraction and manipulation in R](https://github.com/hunzikp/velox), velox nos permite realizar todas nuestras "operaciones raster" mediante C++ [Boost Geometry](https://www.boost.org/doc/libs/1_65_1/libs/geometry/doc/html/index.html) usando sintaxis de R, en otras palabras, tenemos todo el poder C++ en R!.
+
+&lt;br&gt;
+&lt;br&gt;
+¿Cuan dificil es aprender **velox**? ... Nada
+
+&lt;br&gt;
+
+```r
+brk_vx = velox(hb3_prec)
+class(brk_vx)
+```
+---
+### 5. Estimación de la precipitación promedio por cuenca
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+rain3 = brk_vx$extract(as(HydroBASINS_3_elm,'Spatial'),function(x) mean(x,na.rm=T),small=TRUE)
+rain3 %&lt;&gt;% as_tibble() %&gt;% 'colnames&lt;-'(month.abb) %&gt;% mutate(PFAF_ID = HydroBASINS_3_elm$PFAF_ID)
+```
+&lt;br&gt;
+&lt;br&gt;
+Todo en solo 2 líneas de código!!.
+---
+### 6. Generación de mapas en R!
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+H3 = HydroBASINS_3_elm %&gt;% inner_join(.,rain3)
+mv = mapview(H3,zcol = "Dec",legend = TRUE, file = paste0(getwd(), "/map.html"))
+mapshot(mv, url = paste0(getwd(), "/map.html"))
+```
+---
+class: inverse, center, middle
+
+  # Problema N°1:  Lluvias en el Niño 1998 usando R
+---
+# Problema N°1:
+
+Compare el marzo de 1998 con un marzo promedio para todas las cuencas del Perú.
+&lt;br&gt;
+&lt;br&gt;
+* Pasos a seguir:
+  * Descargue PISCOpm para Enero 2017 y tambien para PISCOclim.
+  * Cargue el shapefile del ANA usando sf::st_read.
+  * Cree un objeto veloxRaster(de 2 capas).
+  * Extraiga los valores usado el metodo extract.
+  * Haga un join al shp de cuencas del ANA.
+  * Cree un mapa interacctivo.
+  * BREAK!
+---
+
+```r
+### paso 1:
+
+marCLIM = "ftp://publi_dgh2:123456@ftp.senamhi.gob.pe/PISCOp_V2.1_beta/PISCOp_climatology/PISCOp_climatology/03.tif"
+
+mar1998 = "ftp://publi_dgh2:123456@ftp.senamhi.gob.pe/PISCOp_V2.1_beta/Monthly_Products/unstable/PISCOpm/PISCOpm_V2.1.1998-03-01.tif"
+
+ftp_files = c(mar1998,marCLIM)
+local_dir = '______'
+ftp_filename = sprintf("%s%s",______,basename(ftp_files))
+mapply(download.file,ftp_files,ftp_filename)
+
+### paso 2:
+ana_shp = st_read(______)
+
+### paso 3:
+stk_rain = raster::stack(ftp_filename)
+ratio = stk_rain[[1]]/stk_rain[[2]] # ratio
+vx_ratio = velox(______)
+
+### paso 4:
+ratio_by_basin = vx_ratio$extract(as(______,'Spatial'),function(x) mean(x,na.rm=T),small=___)
+df_ratio = data_frame(ratio = ratio_by_basin[,1],ID = _____$ID)
+ana_shp_r = ______ %&gt;% inner_join(.,df_ratio)
+mapview(______,
+        zcol='ratio',
+        legend=TRUE,
+        at = c(0,0.5,1,2,4,8,15,1000),
+        layer.name='Fenomeno del niño 98')
+```
+---
+class: inverse, center, middle
+
+# BREAK TIME!
+---
+class: invers, center, middle
+
+# Geoestadística con R
+---
+#¿Qué es Geoestadística?
+
+- La geoestadística es una rama de la estadística aplicada que se especializa en el análisis y la modelación de la variabilidad espacial en ciencias de la tierra.
+
+- Su objeto de estudio es el análisis y la predicción de fenómenos en espacio y/o tiempo.
+
+- Actualmente, la geoestadística es un conjunto de técnicas usadas para analizar y predecir valores de una propiedad distribuida en el espacio o tiempo.
+
+- En contraposición con la estadística clásica, tales valores no se consideran independientes, por el contrario se suponen de manera implícita que están correlaciones unos con otros, es decir que existe una dependencia espacial.
+&lt;br&gt;
+&lt;br&gt;
+**Primera Ley de la geográfia:** *Todas las cosas están relacionadas entre sí, pero las cosas* **_más próximas_** *en el espacio tienen una relación* **_mayor_** *que las distantes.*
+---
+# ¿Qué es Geoestadística?
+&lt;br&gt;
+&lt;br&gt;
+
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_I.png" width = "110%", height = "110%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+# Aplicaciones
+
+* Para mapeo o estimación:
+
+  * Reservas mineras totales
+  * Modelos digitales y
+  * superficiales del terreno
+  * Caracterización geoquímica
+  * Meteorología, Hidrología
+  * Yacimientos petroleros
+  * Geomarketing
+  * Contaminación ambiental
+  * Epidemiología
+&lt;br&gt;
+&lt;br&gt;
+* Para caracterización de la incertidumbre en la estimación:
+
+  * Muestreo óptimo
+  * Riesgo ambiental
+  * Estimación de errores
+---
+class: invers, center, middle
+# Conceptos teóricos:
+
+---
+# Interpolación
+$$
+\LARGE
+`\begin{aligned}
+Z^{*} = \sum_{\alpha = 1}^{n}\lambda_\alpha Z
+\end{aligned}`
+$$
+* Donde:
+  * `\(Z^{\\*}\)` Representa la variable a predecir (incognita).
+  * `\(n\)` representa el numero de datos.
+  * `\(\alpha\)` representa todo los datos del 1 a n.
+  * `\(\lambda\)` es el peso(weigthing).
+  * `\(Z\)` son los puntos conocidos (puntos naranjas).
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_II.png" width = "80%", height = "80%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+# Varianza:
+Es una medida de dispersión definida como la esperanza del cuadrado de la desviación de dicha variable respecto a su media.
+&lt;br&gt;
+&lt;br&gt;
+$$
+\LARGE
+`\begin{aligned}
+\sigma ^{2} = \frac{1}{n}\sum_{i=1}^{n}[X_i-\overline{X}]^{2}
+\end{aligned}`
+$$
+&lt;br&gt;
+&lt;br&gt;
+* Donde:
+  * `\(\sigma ^{2}\)` representa la varianza
+  * `\(n\)` representa el numero de datos.
+  * `\(X_i\)` representa todo los datos del 1 a n.
+  * `\(\overline{X}\)` representa la media
+---
+# Covarianza
+
+La covarianza mide la fuerza de la relación lineal entre dos variables.
+
+
+$$
+\LARGE
+`\begin{aligned}
+S_{xy} = \frac{1}{n}\sum_{i=1}^{n}(x_i-\overline{x})(y_i-\overline{y})
+\end{aligned}`
+$$
+&lt;br&gt;
+
+* Donde:
+  * `\(S_{xy}\)` representa la covarianza
+  * `\(n\)` representa el numero de datos.
+  * `\(x_i\)` representa todo los valores de `\(x\)` (del 1 a n).
+  * `\(\overline{x}\)` representa la media de x.
+  * `\(y_i\)` representa todo los valores de `\(y\)` (del 1 a n).
+  * `\(\overline{y}\)` representa la media de y.
+  
+---
+# Variograma 
+
+Es una herramienta que permite analizar el comportamiento espacial de una variable sobre una zona determinada.
+&lt;br&gt;
+* Ejemplo:
+  * Detectar direcciones (homogéneas o no homogéneas)
+  * Zonas de influencia y su extensión (correlación espacial)
+  * Variabilidad con la distancia
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_III.png" width = "60%", height = "60%"/&gt;
+&lt;/figure&gt;
+
+---
+# Variograma Experimental (I)
+
+* Grafica o expresión matemática que cuantifica la diferencia entre los pares de las muestras para una orientación determinada.
+
+* Refleja la distancia máxima y la forma en que un punto tiene influencia sobre otro punto a diferentes distancias.
+
+$$
+\Large
+`\begin{aligned}
+\gamma (h) = \frac{1}{2N(h)}\sum_{n=1}^{N(h)}[Z(x_i + h)-Z(x_i )]^{2}
+\end{aligned}`
+$$
+
+* Donde:
+  * `\(h\)` Distancia del análisis (lag).
+  * `\(N(h)\)` número de pares de puntos a una distancia dada.
+  * `\(Z(x_i)\)` valor de la variable de análisis en el punto `\(x_i\)`.
+  * `\(Z(x_i + h)\)` valor de la variable de análisis en el punto `\(x_i\)` más una distancia `\(h\)` dada.
+---
+# Variograma Experimental (II)
+
+$$
+\Large
+`\begin{aligned}
+pares = \frac{n*n(-1)}{2}
+\end{aligned}`
+$$
+
+&lt;center&gt;
+![](intro_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
+---
+# Variograma Teórico
+
+$$
+\Large
+`\begin{aligned}
+\gamma (h) = \frac{1}{2}E[Z(x)-Z(x+h)]^{2}
+\end{aligned}`
+$$
+&lt;br&gt;
+
+ &lt;font size="5"&gt; ¿Porqué es necesario un variograma teórico? &lt;/font&gt;
+
+* El variograma experimental no se puede evaluar en distancias o direcciones intermedias.
+
+&lt;br&gt;
+
+&lt;font size="5"&gt; ¿Es muy dificil calcular el variograma teórico? &lt;/font&gt;
+
+Con la librería **automap** es prácticamente automático, para entender el algoritmo lea [esto](http://sci-hub.tw/https://www.sciencedirect.com/science/article/pii/S0098300409000867)
+---
+# Modelamiento del Variograma (I)
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_XI.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+# Modelamiento del Variograma (II)
+&lt;br&gt;
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_XII.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+# Modelamiento del Variograma (III)
+&lt;br&gt;
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_XIII.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+#  Modelamiento del Variograma (IV)
+&lt;br&gt;
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_XIV.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+# Modelamiento del Variograma (V)
+&lt;br&gt;
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_XV.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+# Modelamiento del Variograma (VI)
+&lt;br&gt;
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_XVII.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+# Modelamiento del Variograma (VII)
+&lt;br&gt;
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_XVI.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+# Modelamiento del Variograma (VIII)
+&lt;br&gt;
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_XVIII.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+# Modelamiento del Variograma (IX)
+&lt;br&gt;
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_XIX.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+# Análisis de la Estructura de Aleatoridad
+
+* Condición de insesgamiento de la muestra
+
+* Hipótesis de Estacionaridad
+
+  * 1er Orden: Invariante a traslación.
+  
+  * 2do Orden: Esperanza y varianza constante y finita.
+  
+  * Débil o intrínseca: Varianza no finita, se trabaja solo con la hipótesis que requiere que los incrementos `\([Z(x + h) ; Z(x)]\)` sean estacionarios.
+
+
+  
+$$
+\Large
+`\begin{aligned}
+Z^{*} = \sum_{\alpha = 1}^{n}\lambda_\alpha Z
+\end{aligned}`
+$$
+
+&lt;br&gt;  
+
+En **IDW** `\(\lambda\)` es el inverso de la distancia.
+
+En **Kriging** `\(\lambda\)` se obtiene al minimizar la varianza espacial      
+
+---
+# ¿Como Funciona Kriging?
+
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_IV.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+
+---
+# Kriging Explicado (I)
+
+&lt;br&gt;
+Luego de aplicar esto:
+
+* Multiplicadores de Lagrange
+* ¿Cual es la varianza de una combinación lineal?
+* Teorema del multinomio
+* Relación entre el variograma y covarianza
+* ¿Cómo se calcula el máximo y mínimo de una función?
+
+Llegamos a:
+
+$$
+\Large
+`\begin{aligned}
+\lambda = C^{-1}D
+\end{aligned}`
+$$
+
+Donde:
+
+  * **C** es la relación entre observaciones.
+  * **D** es la relación de las observaciones y el punto a estimar.
+
+Para una explicación mas formal del kriging clic [aquí](http://www.imm.dtu.dk/~alan/krexample.pdf)
+---
+# Kriging Explicado (II)
+
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_VII.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+
+---
+# Kriging Explicado (III)
+
+&lt;br&gt;
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_VIII.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+# Kriging Explicado (IV)
+
+
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_V.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+---
+class: invers, center, middle
+# Problema 3: Crear un mapa de precipitación para el departamento de Piura media Kriging con deriva externa y ordinario.
+---
+# PISCOp metodología
+
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_IX.png" width = "200%", height = "200%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+
+---
+# 1. Leyendo los datos observados
+
+* Descargamos los [datos observados](ftp://publi_dgh2:123456@ftp.senamhi.gob.pe/PISCOp_V2.1_beta/PISCOp_raingauge_database.Rdata)
+
+
+```r
+library(raster)
+library(sp)
+library(sf)
+rm(list = ls())
+# 1.1 Cargamos los datos
+Rdata = '/home/aybarpc01/Downloads/PISCOp_raingauge_database.Rdata'
+load(Rdata)
+ana_shp = st_read("/home/aybarpc01/Downloads/shp/UH.shp",stringsAsFactors = F)
+
+# 1.2 Obtenemos información
+gauge_sf = as(PISCOp_raingauge_database$spatial,"sf")
+position_urub = ana_shp$NOMBRE %in% "Intercuenca Alto Apurímac" %&gt;% which 
+apurimac =  ana_shp[position_urub,1]
+gauge_sf = st_intersection(gauge_sf,st_buffer(apurimac,0.25))
+
+# 1.3 Graficos!!
+plot(apurimac$geometry,main='Alto Apurímac')
+plot(gauge_sf_g$geometry, col = 'red', add = TRUE)
+```
+---
+# 2. Preparacion de datos 
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+datos_obs = PISCOp_raingauge_database$unstable$plausible[gauge_sf_g$id]
+sp_gauge = as(gauge_sf_g,'Spatial')
+sp_gauge@data= datos_obs %&gt;% t %&gt;% tbl_df
+apurimac_sp = as(apurimac,'Spatial')
+grid &lt;- makegrid(apurimac_sp, cellsize = 0.1) # cellsize in map units!
+apurimac_grid &lt;- SpatialPoints(grid, proj4string = CRS(proj4string(apurimac_sp)))
+gridded(apurimac_grid) = TRUE
+```
+---
+# 3. Interpolación!
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+idw_apurimac &lt;- idw(V1~1,sp_gauge,apurimac_grid)[1]
+variog = autofitVariogram(V1~1,sp_gauge)
+ko_apurimac &lt;- krige(V1~1,sp_gauge,apurimac_grid,variog$var_model)[1]
+names(ko_apurimac) = 'ko'
+ko_apurimac$idw = idw_apurimac$var1.pred
+spplot(ko_apurimac)
+```
+---
+# 4. Guarde los resultados
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+stk_rain = raster::stack(ko_apurimac)
+writeRaster(stk_rain[[1]],"ko.tif")
+writeRaster(stk_rain[[2]],"idw.tif")
+```
+---
+class: invers, center, middle
+
+# Problema 4: Corregir datos PISCOp para el Mantaro
+---
+# Corrección de Productos Grillados
+&lt;center&gt;
+&lt;figure&gt;
+&lt;img align="center" src="img/geostat_X.png" width = "50%", height = "50%"/&gt;
+&lt;/figure&gt;
+&lt;/center&gt;
+*Nerini et al.,2015*
+---
+# 1. Leyendo los datos necesarios
+
+* Descargamos los [datos observados](ftp://publi_dgh2:123456@ftp.senamhi.gob.pe/PISCOp_V2.1_beta/PISCOp_raingauge_database.Rdata)
+
+* Descargamos [PISCOpm](ftp://publi_dgh2:123456@ftp.senamhi.gob.pe/PISCOp_V2.1_beta/Monthly_Products/unstable/PISCOpm/PISCOpm_V2.1.2018-08-01.tif)
+
+
+```r
+# 1.1 Cargamos los datos
+Rdata = '/home/aybarpc01/Downloads/PISCOp_raingauge_database.Rdata'
+load(Rdata)
+ana_shp = st_read("/home/aybarpc01/Downloads/shp/UH.shp",stringsAsFactors = F)
+Rrain = raster('/home/aybarpc01/Downloads/PISCOpm_V2.1.2018-08-01.tif')
+
+
+# 1.2 Obtenemos información
+gauge_sf = as(PISCOp_raingauge_database$spatial,"sf")
+gauge_sf$id = 1:nrow(gauge_sf)
+position_urub = ana_shp$NOMBRE %in% "Intercuenca Alto Apurímac" %&gt;% which 
+apurimac =  ana_shp[position_urub,1]
+gauge_sf_g = st_intersection(gauge_sf,st_buffer(apurimac,0.25))
+
+# 1.3 Leemos los datos
+plot(apurimac$geometry,main='Alto Apurímac')
+plot(gauge_sf_g$geometry, col = 'red', add = TRUE)
+```
+---
+# 2. Preparacion de datos
+
+&lt;br&gt;
+&lt;br&gt;
+
+
+```r
+datos_obs = PISCOp_raingauge_database$unstable$plausible[gauge_sf_g$id]
+sp_gauge = as(gauge_sf_g,'Spatial')
+sp_gauge@data= datos_obs %&gt;% t %&gt;% tbl_df
+apurimac_rain = mask(crop(Rrain,apurimac),apurimac)
+gauge_data = sp_gauge[452]@data[[1]]
+PISCO_data = raster::extract(Rrain,sp_gauge)
+```
+---
+# 3. Graficos y a guardar
+
+
+```r
+# 3.1 Generación de ratio
+gauge_sp = mean(sp_gauge[452]@data[[1]])
+raster_sp = mean(extract(Rrain,sp_gauge))
+ratio = gauge_sp/raster_sp
+
+# 3.2 Grafica y guarda tus resultados!
+apurimac_rain = mask(crop(Rrain,apurimac),apurimac) * ratio
+spplot(apurimac_rain)
+writeRaster(apurimac_rain,"apurimac_rain.tif")
+```
+---
+class: inverse, center, middle
+
+# FIN ... MUCHAS GRACIAS ^^!
+---
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "dracula",
+"highlightLines": true,
+"ratio": "4:3",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
