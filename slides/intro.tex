@@ -1,0 +1,1006 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Geocomputación con R},
+            pdfauthor={Cesar Aybar Camacho},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Geocomputación con R}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \subtitle{Nivel Básico}
+  \author{Cesar Aybar Camacho}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{2018-10-14}
+
+
+\begin{document}
+\maketitle
+
+layout: true background-image: url(img/r\_geocomp\_background.png)
+background-size: cover
+
+\section{Encuentre las slides y el
+código}\label{encuentre-las-slides-y-el-codigo}
+
+ \url{https://github.com/jannes-m/erum18_geocompr} Antes de empezar
+\ldots{} Por favor instale las siguientes librerías:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{install.packages}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"RCurl"}\NormalTok{,}\StringTok{"sf"}\NormalTok{, }\StringTok{"raster"}\NormalTok{, }\StringTok{"gstat"}\NormalTok{,}\StringTok{"automap"}\NormalTok{,}
+                   \StringTok{"tidyverse"}\NormalTok{,}\StringTok{"mapview"}\NormalTok{,}\StringTok{"units"}\NormalTok{,}\StringTok{"tidyverse"}\NormalTok{,}
+                   \StringTok{"raster"}\NormalTok{,}\StringTok{"velox"}\NormalTok{,}\StringTok{"gstat"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+layout: true background-image: url(img/r\_geocomp\_background.png)
+background-size: cover ---
+
+\section{Que es un SIG?}\label{que-es-un-sig}
+
+\begin{itemize}
+\tightlist
+\item
+  Un \textbf{S}istema de \textbf{I}nformación \textbf{G}eográfica es un
+  sistema para analizar, manipular y vizualizar información geográfica
+  (Longley, Goodchild, Maguire, and Rhind, 2015)
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Seis componentes de un SIG: software, datos, procedimientos, hardware,
+  gente y redes.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Paquetes de software SIG típicos: \textbf{QGIS}, SAGA-GIS, GRASS-GIS,
+  ArcMap (commercial)
+\end{itemize}
+
+\section{Datos espaciales}\label{datos-espaciales}
+
+\begin{itemize}
+\tightlist
+\item
+  Los datos espaciales consisten de \textbf{coordenadas-xy} junto a
+  \textbf{atributos} (esto puede incluir una marca de tiempo, de lo
+  contrario, los datos son estáticos).
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Por lo general, ignoramos la curvatura de la Tierra al visualizar
+  datos geográficos.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Los datos geográficos son una representación simplificada del mundo.
+  Nosotros decidimos qué exhibimos, cómo y para qué propósito.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Los datos geográficos pueden convertirse rápidamente en grandes.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Dos modelos de datos comúnes para representar datos espaciales son: el
+  modelo espacial \textbf{vector} y \textbf{raster}.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{Modelo vectorial}\label{modelo-vectorial}
+
+\begin{itemize}
+\tightlist
+\item
+  Objetos discretos representados por puntos.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Tres principales subtipos: puntos, lineas and polígonos.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Especialmente adecuado para objetos con bordes bien definidos (lagos,
+  casas, calles, etc).
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Tabla de atributos.
+\end{itemize}
+
+\subsection{\texorpdfstring{Puede leer más en:
+\url{https://geocompr.robinlovelace.net/spatial-class.html\#vector-data}}{Puede leer más en: https://geocompr.robinlovelace.net/spatial-class.html\#vector-data}}\label{puede-leer-mas-en-httpsgeocompr.robinlovelace.netspatial-class.htmlvector-data}
+
+\section{Modelo raster}\label{modelo-raster}
+
+\begin{itemize}
+\tightlist
+\item
+  Campos continuos representados por celdas.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Un solo atributo por cada celda.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Especialmente adecuado para datos continuos sin bordes agudos
+  (elevación, precipitación)
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Estructura: encabezado de ráster (origen, resolución, ncol, nrow, crs,
+  NAvalue) y matriz que contiene los datos.
+\end{itemize}
+
+--
+
+\begin{itemize}
+\tightlist
+\item
+  Algebra de mapas.
+\end{itemize}
+
+--
+
+Puede leer más en:
+\url{https://geocompr.robinlovelace.net/spatial-class.html\#raster-data}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{Cabecera Raster}\label{cabecera-raster}
+
+\section{Sistemas de Referencia de
+Coordenadas}\label{sistemas-de-referencia-de-coordenadas}
+
+Utilizamos Sistemas de Referencia de Coordenadas (CRS, por sus siglas en
+ingles) para ubicar nuestros datos geográficos en la Tierra.
+
+We distinguish between:
+
+\begin{itemize}
+\item
+  Los CRS \textbf{geográficos}.
+\item ~
+  \subsection{\texorpdfstring{Los CRS
+  \textbf{proyectados}.}{Los CRS proyectados.}}\label{los-crs-proyectados.}
+\end{itemize}
+
+\section{CRS geográfico}\label{crs-geografico}
+
+.pull-left{[} - Usualmente en grados decimales. - WGS-84 es lo más
+común. - Ideal para ubicar un lugar en la Tierra. - Lo mejor para el
+análisis global. - Menos adecuado si quieres medir la distancia.{]}
+
+.pull-right{[}
+
+Source: Geocomputation with R.
+
+\subsection{{]}}\label{section}
+
+\section{CRS geográfico}\label{crs-geografico-1}
+
+.pull-left{[} - Usualmente en grados decimales. - WGS-84 es lo más
+común. - Ideal para ubicar un lugar en la Tierra. - Lo mejor para el
+análisis global. - Menos adecuado si quieres medir la distancia. - Mayor
+distorsión en los polos.{]}
+
+.pull-right{[}
+\includegraphics{intro_files/figure-latex/unnamed-chunk-5-1.pdf} {]} ???
+difference 1 decimal degree at the equator and at the poles ---
+
+\section{CRS Proyectado}\label{crs-proyectado}
+
+\begin{itemize}
+\tightlist
+\item
+  Las proyecciones espaciales \textbf{aplanan} la forma tridimensional
+  de la Tierra en un plano 2D
+\item
+  Especialmente adecuado para el análisis \textbf{local}.
+\end{itemize}
+
+.pull-right{[}
+
+Source: progonos.com/furuti/
+
+{]}
+
+\begin{longtable}[]{@{}l@{}}
+\toprule
+\begin{minipage}[b]{0.04\columnwidth}\raggedright\strut
+ Puede leer más en: -
+\href{https://geocompr.robinlovelace.net/transform.html\#reproj-geo-data}{Gecomputation
+with R - Projections} -
+\href{https://docs.qgis.org/2.14/en/docs/gentle_gis_introduction/coordinate_reference_systems.html}{QGIS
+CRS documentation} -
+\href{https://earthdatascience.org/courses/earth-analytics/spatial-data-r/intro-to-coordinate-reference-systems/}{Earth
+Data Science CRS}\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.04\columnwidth}\raggedright\strut
+class: inverse, center, middle\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.04\columnwidth}\raggedright\strut
+\# Breve historía sobre R-spatial\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\section{Breve historía sobre
+R-spatial}\label{breve-historia-sobre-r-spatial}
+
+\begin{itemize}
+\item
+  Paquetes espaciales ya disponibles en el lenguaje S desde la década de
+  1990 (Bivand and Gebhardt, 2000) --
+\item
+  En 2000, las modificaciones de estos se convirtieron en paquetes R
+  para el análisis de patrones de puntos, geoestadística, análisis de
+  datos espaciales exploratorios y econometría espacial (aún mucho
+  paquetes dispersos). --
+\item
+  R-GIS bridges (Bivand, 2000) --
+\item
+  Bivand (2003) propuso un sistema de clase de datos espaciales para R
+  que eventualmente condujo a los paquetes \textbf{rgdal} (first
+  released in 2003; Bivand, Keitt, and Rowlingson, 2018) y \textbf{sp}
+  (first released in 2005; Bivand, Pebesma, and Gomez-Rubio, 2013) --
+\item
+  2008: Análisis aplicado de datos espaciales con R(Bivand, Pebesma, and
+  Gomez-Rubio, 2013) --
+\item
+  2010: paquete \textbf{raster} (Hijmans, 2017) --
+\item
+  2011: paquete \textbf{rgeos} (Bivand and Rundel, 2017) --
+\item
+  2016-17: \textbf{sf} - simple features para R (Pebesma, 2018a) --
+\item
+  2017-18: \textbf{stars} - \emph{spatiotemporal tidy arrays} para R
+  (Pebesma, 2018b) -- 
+\end{itemize}
+
+\subsection{\texorpdfstring{Puede leer más en:
+\url{https://geocompr.robinlovelace.net/intro.html\#the-history-of-r-spatial}}{Puede leer más en: https://geocompr.robinlovelace.net/intro.html\#the-history-of-r-spatial}}\label{puede-leer-mas-en-httpsgeocompr.robinlovelace.netintro.htmlthe-history-of-r-spatial}
+
+class: small \# References Bivand, Roger (2003). ``Approaches to Classes
+for Spatial Data in R''. In: \emph{Proceedings of DSC}. Ed. by Kurt
+Hornik, Friedrich Leisch and Achim Zeileis. URL:
+\url{https://www.r-project.org/nosvn/conferences/DSC-2003/Proceedings/Bivand.pdf}
+(visited on Jun. 27, 2017).
+
+Bivand, Roger S. (2000). ``Using the R Statistical Data Analysis
+Language on GRASS 5.0 GIS Database Files''. In: \emph{Computers \&
+Geosciences} 26.9, pp.~1043-1052. URL:
+\url{http://www.sciencedirect.com/science/article/pii/S0098300400000571}
+(visited on Jul. 11, 2017).
+
+Bivand, Roger S, Edzer Pebesma and Virgilio Gomez-Rubio (2013).
+\emph{Applied Spatial Data Analysis with R}. 2nd ed.. New York:
+Springer. 405 pp.~ISBN: 978-1-4614-7617-7.
+
+Bivand, Roger and Albrecht Gebhardt (2000). ``Implementing Functions for
+Spatial Statistical Analysis Using the Language''. In: \emph{Journal of
+Geographical Systems} 2.3, pp.~307-317. URL:
+\url{http://www.springerlink.com/index/CJRPUMB78JUYH54W.pdf} (visited on
+Jul. 12, 2017).
+
+Bivand, Roger, Tim Keitt and Barry Rowlingson (2018). \emph{Rgdal:
+Bindings for the `Geospatial' Data Abstraction Library}. R package
+version 1.2-18. URL: \url{https://CRAN.R-project.org/package=rgdal}.
+
+Bivand, Roger and Colin Rundel (2017). \emph{Rgeos: Interface to
+Geometry Engine - Open Source (`GEOS')}. R package version 0.3-26. URL:
+\url{https://CRAN.R-project.org/package=rgeos}.
+
+Hijmans, Robert J. (2017). \emph{Raster: Geographic Data Analysis and
+Modeling}. R package version 2.6-7. URL:
+\url{https://CRAN.R-project.org/package=raster}.
+
+Longley, Paul, Michael Goodchild, David Maguire, et al. (2015).
+\emph{Geographic Information Science \& Systems}. Fourth edition.
+Hoboken, NJ: Wiley. 477 pp.~ISBN: 978-1-118-67695-0.
+
+Pebesma, Edzer (2018a). \emph{Sf: Simple Features for R}. R package
+version 0.6-2. URL: \url{https://CRAN.R-project.org/package=sf}.
+
+Pebesma, Edzer (2018b). \emph{Stars: Scalable, Spatiotemporal Tidy
+Arrays for R}. R package version 0.1-1. URL:
+\url{https://github.com/r-spatial/stars/}. --- \# Simple features in R
+
+\subsection{\texorpdfstring{\textbf{\emph{Simple features}} es un
+\href{http://www.opengeospatial.org/standards/sfa}{estandar ISO}
+ampliamente utilizado. Edzer Pebesma implementó \textbf{simple
+featuress} en R a través del paquete
+sf.}{Simple features es un estandar ISO ampliamente utilizado. Edzer Pebesma implementó simple featuress en R a través del paquete sf.}}\label{simple-features-es-un-estandar-iso-ampliamente-utilizado.-edzer-pebesma-implemento-simple-featuress-en-r-a-traves-del-paquete-sf.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data}\NormalTok{(random_points, }\DataTypeTok{package =} \StringTok{"RQGIS"}\NormalTok{)}
+\KeywordTok{class}\NormalTok{(random_points)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "sf"         "data.frame"
+\end{verbatim}
+
+\subsection{\texorpdfstring{\textbf{sf} carga automaticamente
+\href{https://trac.osgeo.org/geos/}{GEOS},
+\href{http://www.gdal.org/}{GDAL} y
+\href{https://proj4.org/}{Proj.4}.}{sf carga automaticamente GEOS, GDAL y Proj.4.}}\label{sf-carga-automaticamente-geos-gdal-y-proj.4.}
+
+\subsection{\texorpdfstring{Para más información leer
+\url{https://geocompr.robinlovelace.net/spatial-operations.html\#spatial-vec}}{Para más información leer https://geocompr.robinlovelace.net/spatial-operations.html\#spatial-vec}}\label{para-mas-informacion-leer-httpsgeocompr.robinlovelace.netspatial-operations.htmlspatial-vec}
+
+\section{Sistema de Clasificación
+Pfafstetter}\label{sistema-de-clasificacion-pfafstetter}
+
+.pull-center{[}
+
+Source: ponce.edu.com
+
+{]}
+
+\section{2.\_ Librerias}\label{librerias}
+
+ Revise que todas las liberias esten conrrectamente instaladas!
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(RCurl) }\CommentTok{# wrapper para libcurl (libraria para manejo de HTTP y FTP)}
+\KeywordTok{library}\NormalTok{(sf) }\CommentTok{# Simple features in R}
+\KeywordTok{library}\NormalTok{(mapview) }\CommentTok{# Mapas interactivos en R}
+\KeywordTok{library}\NormalTok{(units) }\CommentTok{# Manejo de unidades (eg. m^2 or km^2)}
+\KeywordTok{library}\NormalTok{(tidyverse) }\CommentTok{#Framework para manipulacion y vizualisacion de datos}
+\KeywordTok{library}\NormalTok{(raster) }\CommentTok{# Manjeo de Rasters en R}
+\KeywordTok{library}\NormalTok{(velox) }\CommentTok{# C++ (Rcpp) para la manipulacion de objetos Raster}
+\KeywordTok{library}\NormalTok{(gstat) }\CommentTok{# Geoestadistica en R}
+\end{Highlighting}
+\end{Shaded}
+
+\section{4.\_ Obtenemos información de los
+shapefiles}\label{obtenemos-informacion-de-los-shapefiles}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{names}\NormalTok{(Hsheds)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] "HYBAS_ID"  "NEXT_DOWN" "NEXT_SINK" "MAIN_BAS"  "DIST_SINK"
+##  [6] "DIST_MAIN" "SUB_AREA"  "UP_AREA"   "PFAF_ID"   "SIDE"     
+## [11] "LAKE"      "ENDO"      "COAST"     "ORDER"     "SORT"     
+## [16] "geometry"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{names}\NormalTok{(Asheds)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] "OBJECTID"   "ID"         "NIVEL1"     "NIVEL2"     "NIVEL3"    
+##  [6] "NIVEL4"     "NIVEL5"     "NIVEL6"     "NIVEL7"     "NOMB_UH_N1"
+## [11] "NOMB_UH_N2" "NOMB_UH_N3" "NOMB_UH_N4" "NOMB_UH_N5" "NOMB_UH_N6"
+## [16] "NOMB_UH_N7" "CODIGO"     "NOMBRE"     "ORDEN"      "AREA_KM2"  
+## [21] "Shape_Leng" "Shape_Area" "geometry"
+\end{verbatim}
+
+\subsubsection{6.\_ Agrupamiento de las geometrias según el sistema de
+codigos
+Pfafstetter}\label{agrupamiento-de-las-geometrias-segun-el-sistema-de-codigos-pfafstetter}
+
+Para entender el sistema de códigos Pfafstetter revise
+\textbf{\textbf{HydroBASINS\_TechDoc\_v1c.pdf}}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{HydroBASINS_lvl =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(hbasin_shp,lvl) \{}
+\NormalTok{  hbasin_shp }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{PFAF_ID =} \KeywordTok{substr}\NormalTok{(PFAF_ID,}\DecValTok{1}\NormalTok{,lvl)) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{group_by}\NormalTok{(PFAF_ID) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{    }\KeywordTok{summarise_all}\NormalTok{(}\KeywordTok{funs}\NormalTok{(mean))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+ Vizualizacion del nivel 3
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{HydroBASINS_}\DecValTok{3}\NormalTok{ =}\StringTok{ }\KeywordTok{HydroBASINS_lvl}\NormalTok{(HPsheds,}\DecValTok{3}\NormalTok{)}
+\NormalTok{HydroBASINS_}\DecValTok{5}\NormalTok{ =}\StringTok{ }\KeywordTok{HydroBASINS_lvl}\NormalTok{(HPsheds,}\DecValTok{5}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(HydroBASINS_}\DecValTok{3}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(HydroBASINS_}\DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{\texorpdfstring{7.\_ Filter usando
+\textbf{sf}}{7.\_ Filter usando sf}}\label{filter-usando-sf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{basin_area =}\StringTok{ }\KeywordTok{set_units}\NormalTok{(}\KeywordTok{st_area}\NormalTok{(HydroBASINS_}\DecValTok{3}\NormalTok{),km}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\NormalTok{thershold =}\StringTok{ }\NormalTok{units}\OperatorTok{::}\KeywordTok{set_units}\NormalTok{(}\DecValTok{2000}\NormalTok{, km}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\NormalTok{HydroBASINS_}\DecValTok{3}\NormalTok{ =}\StringTok{ }\NormalTok{HydroBASINS_}\DecValTok{3} \OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{area =}\NormalTok{ basin_area) }
+\NormalTok{HydroBASINS_3_elm =}\StringTok{ }\NormalTok{HydroBASINS_}\DecValTok{3}  \OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(area }\OperatorTok{>}\StringTok{ }\NormalTok{thershold) }\OperatorTok{%>%}\StringTok{   }\KeywordTok{st_buffer}\NormalTok{(.}\DecValTok{000001}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(HydroBASINS_3_elm[}\DecValTok{1}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+ Como se puede dar cuenta \textbf{sf} extiende las funcionalidades de
+\textbf{tydiverse} al manejo de datos espaciales. Algo parecido a
+\textbf{geopandas} en \emph{python}.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\subsubsection{\texorpdfstring{Para más información de \textbf{sf}
+revise los siguientes
+links:}{Para más información de sf revise los siguientes links:}}\label{para-mas-informacion-de-sf-revise-los-siguientes-links}
+
+\begin{itemize}
+\item
+  \url{https://www.jessesadler.com/post/gis-with-r-intro/}
+\item
+  \url{https://edzer.github.io/UseR2017/}
+\item
+  \url{https://www.r-spatial.org/r/2017/01/12/newssf.html}
+\item
+  \url{https://www.r-spatial.org/r/2016/07/18/sf2.html}
+\item
+  \url{https://www.jessesadler.com/post/simple-feature-objects/}
+\end{itemize}
+
+\section{1. Descargemos los datos de PISCOp
+(I)}\label{descargemos-los-datos-de-piscop-i}
+
+ \textbf{1.1 Definimos la ruta }
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ftp =}\StringTok{ 'ftp://publi_dgh2:123456@ftp.senamhi.gob.pe'}
+\NormalTok{route =}\StringTok{ 'PISCOp_V2.1_beta/PISCOp_climatology/PISCOp_climatology/'}
+\NormalTok{myURL =}\StringTok{ }\KeywordTok{sprintf}\NormalTok{(}\StringTok{'%s/%s'}\NormalTok{,ftp,route)}
+\end{Highlighting}
+\end{Shaded}
+
+ \textbf{1.2 getURL: nos permite manipular URI's}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{filenames <-}\StringTok{ }\KeywordTok{getURL}\NormalTok{(myURL, }\DataTypeTok{ftp.use.epsv =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{ftplistonly=}\OtherTok{TRUE}\NormalTok{, }\DataTypeTok{crlf=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{files =}\StringTok{ }\KeywordTok{strsplit}\NormalTok{(filenames, }\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)[[}\DecValTok{1}\NormalTok{]]}
+\NormalTok{PISCOfiles <-}\StringTok{ }\KeywordTok{sprintf}\NormalTok{(}\StringTok{'%s/%s'}\NormalTok{,myURL,files)}
+\end{Highlighting}
+\end{Shaded}
+
+\section{2. Creación de un Raster
+object}\label{creacion-de-un-raster-object}
+
+Existen 3 tipos: - \textbf{RasterLayer:} Matrix object enriquecido para
+el soporte de análisis espacial. - \textbf{RasterStack:} Collecion de
+RasterLayer con las misma dimension y extension (MultiLevel Pointer). -
+\textbf{RasterBrick:} Objeto de multiple capas (One Pointer)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{list_raster =}\StringTok{ }\KeywordTok{list.files}\NormalTok{(name_dir,}\StringTok{'}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{.tif$'}\NormalTok{,}\DataTypeTok{full.names =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{stk_R =}\StringTok{ }\KeywordTok{stack}\NormalTok{(list_raster)  }\CommentTok{#stack}
+\NormalTok{brk_R =}\StringTok{ }\KeywordTok{brick}\NormalTok{(stk_R) }\CommentTok{#brick  }
+\KeywordTok{plot}\NormalTok{(brk_R)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{3. Metodos disponibles en RasterLayer, RasterStack o
+RasterBrick
+(II)}\label{metodos-disponibles-en-rasterlayer-rasterstack-o-rasterbrick-ii}
+
+ - mask() ejemplo:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hb3_prec =}\StringTok{ }\KeywordTok{mask}\NormalTok{(brk_R,HydroBASINS_3_elm)}
+\KeywordTok{plot}\NormalTok{(hb3_prec)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  crop() ejemplo:
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hb3_prec =}\StringTok{ }\KeywordTok{crop}\NormalTok{(brk_R,HydroBASINS_3_elm)}
+\KeywordTok{plot}\NormalTok{(hb3_prec)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  extract() ejemplo:
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hb3_prec =}\StringTok{ }\KeywordTok{crop}\NormalTok{(brk_R,HydroBASINS_3_elm,}\DataTypeTok{fun=}\NormalTok{mean)}
+\KeywordTok{plot}\NormalTok{(hb3_prec)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{5. Estimación de la precipitación promedio por
+cuenca}\label{estimacion-de-la-precipitacion-promedio-por-cuenca}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rain3 =}\StringTok{ }\NormalTok{brk_vx}\OperatorTok{$}\KeywordTok{extract}\NormalTok{(}\KeywordTok{as}\NormalTok{(HydroBASINS_3_elm,}\StringTok{'Spatial'}\NormalTok{),}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{mean}\NormalTok{(x,}\DataTypeTok{na.rm=}\NormalTok{T),}\DataTypeTok{small=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{rain3 }\OperatorTok{%<>%}\StringTok{ }\KeywordTok{as_tibble}\NormalTok{() }\OperatorTok{%>%}\StringTok{ 'colnames<-'}\NormalTok{(month.abb) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{PFAF_ID =}\NormalTok{ HydroBASINS_3_elm}\OperatorTok{$}\NormalTok{PFAF_ID)}
+\end{Highlighting}
+\end{Shaded}
+
+ Todo en solo 2 líneas de código!!. --- \#\#\# 6. Generación de mapas en
+R!
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{H3 =}\StringTok{ }\NormalTok{HydroBASINS_3_elm }\OperatorTok{%>%}\StringTok{ }\KeywordTok{inner_join}\NormalTok{(.,rain3)}
+\NormalTok{mv =}\StringTok{ }\KeywordTok{mapview}\NormalTok{(H3,}\DataTypeTok{zcol =} \StringTok{"Dec"}\NormalTok{,}\DataTypeTok{legend =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{file =} \KeywordTok{paste0}\NormalTok{(}\KeywordTok{getwd}\NormalTok{(), }\StringTok{"/map.html"}\NormalTok{))}
+\KeywordTok{mapshot}\NormalTok{(mv, }\DataTypeTok{url =} \KeywordTok{paste0}\NormalTok{(}\KeywordTok{getwd}\NormalTok{(), }\StringTok{"/map.html"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Problema N°1:}\label{problema-n1}
+
+Compare el marzo de 1998 con un marzo promedio para todas las cuencas
+del Perú. * Pasos a seguir: * Descargue PISCOpm para Enero 2017 y
+tambien para PISCOclim. * Cargue el shapefile del ANA usando
+sf::st\_read. * Cree un objeto veloxRaster(de 2 capas). * Extraiga los
+valores usado el metodo extract. * Haga un join al shp de cuencas del
+ANA. * Cree un mapa interacctivo. * BREAK! ---
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{### paso 1:}
+
+\NormalTok{marCLIM =}\StringTok{ "ftp://publi_dgh2:123456@ftp.senamhi.gob.pe/PISCOp_V2.1_beta/PISCOp_climatology/PISCOp_climatology/03.tif"}
+
+\NormalTok{mar1998 =}\StringTok{ "ftp://publi_dgh2:123456@ftp.senamhi.gob.pe/PISCOp_V2.1_beta/Monthly_Products/unstable/PISCOpm/PISCOpm_V2.1.1998-03-01.tif"}
+
+\NormalTok{ftp_files =}\StringTok{ }\KeywordTok{c}\NormalTok{(mar1998,marCLIM)}
+\NormalTok{local_dir =}\StringTok{ '______'}
+\NormalTok{ftp_filename =}\StringTok{ }\KeywordTok{sprintf}\NormalTok{(}\StringTok{"%s%s"}\NormalTok{,______,}\KeywordTok{basename}\NormalTok{(ftp_files))}
+\KeywordTok{mapply}\NormalTok{(download.file,ftp_files,ftp_filename)}
+
+\NormalTok{### paso 2:}
+\NormalTok{ana_shp =}\StringTok{ }\KeywordTok{st_read}\NormalTok{(______)}
+
+\NormalTok{### paso 3:}
+\NormalTok{stk_rain =}\StringTok{ }\NormalTok{raster}\OperatorTok{::}\KeywordTok{stack}\NormalTok{(ftp_filename)}
+\NormalTok{ratio =}\StringTok{ }\NormalTok{stk_rain[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{/}\NormalTok{stk_rain[[}\DecValTok{2}\NormalTok{]] }\CommentTok{# ratio}
+\NormalTok{vx_ratio =}\StringTok{ }\KeywordTok{velox}\NormalTok{(______)}
+
+\NormalTok{### paso 4:}
+\NormalTok{ratio_by_basin =}\StringTok{ }\NormalTok{vx_ratio}\OperatorTok{$}\KeywordTok{extract}\NormalTok{(}\KeywordTok{as}\NormalTok{(______,}\StringTok{'Spatial'}\NormalTok{),}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{mean}\NormalTok{(x,}\DataTypeTok{na.rm=}\NormalTok{T),}\DataTypeTok{small=}\NormalTok{___)}
+\NormalTok{df_ratio =}\StringTok{ }\KeywordTok{data_frame}\NormalTok{(}\DataTypeTok{ratio =}\NormalTok{ ratio_by_basin[,}\DecValTok{1}\NormalTok{],}\DataTypeTok{ID =}\NormalTok{ _____}\OperatorTok{$}\NormalTok{ID)}
+\NormalTok{ana_shp_r =}\StringTok{ }\NormalTok{______ }\OperatorTok{%>%}\StringTok{ }\KeywordTok{inner_join}\NormalTok{(.,df_ratio)}
+\KeywordTok{mapview}\NormalTok{(______,}
+        \DataTypeTok{zcol=}\StringTok{'ratio'}\NormalTok{,}
+        \DataTypeTok{legend=}\OtherTok{TRUE}\NormalTok{,}
+        \DataTypeTok{at =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FloatTok{0.5}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{15}\NormalTok{,}\DecValTok{1000}\NormalTok{),}
+        \DataTypeTok{layer.name=}\StringTok{'Fenomeno del niño 98'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+class: invers, center, middle
+
+\subsection{\# Geoestadística con R}\label{geoestadistica-con-r}
+
+\section{¿Qué es Geoestadística?}\label{que-es-geoestadistica}
+
+\begin{itemize}
+\item
+  La geoestadística es una rama de la estadística aplicada que se
+  especializa en el análisis y la modelación de la variabilidad espacial
+  en ciencias de la tierra.
+\item
+  Su objeto de estudio es el análisis y la predicción de fenómenos en
+  espacio y/o tiempo.
+\item
+  Actualmente, la geoestadística es un conjunto de técnicas usadas para
+  analizar y predecir valores de una propiedad distribuida en el espacio
+  o tiempo.
+\item
+  En contraposición con la estadística clásica, tales valores no se
+  consideran independientes, por el contrario se suponen de manera
+  implícita que están correlaciones unos con otros, es decir que existe
+  una dependencia espacial. \textbf{Primera Ley de la geográfia:}
+  \emph{Todas las cosas están relacionadas entre sí, pero las cosas}
+  \textbf{\emph{más próximas}} \emph{en el espacio tienen una relación}
+  \textbf{\emph{mayor}} \emph{que las distantes.} --- \# ¿Qué es
+  Geoestadística? 
+\end{itemize}
+
+class: invers, center, middle \# Conceptos teóricos:
+
+\section{Varianza:}\label{varianza}
+
+Es una medida de dispersión definida como la esperanza del cuadrado de
+la desviación de dicha variable respecto a su media. \[
+\LARGE
+\begin{aligned}
+\sigma ^{2} = \frac{1}{n}\sum_{i=1}^{n}[X_i-\overline{X}]^{2}
+\end{aligned}
+\] * Donde: * \(\sigma ^{2}\) representa la varianza * \(n\) representa
+el numero de datos. * \(X_i\) representa todo los datos del 1 a n. *
+\(\overline{X}\) representa la media --- \# Covarianza
+
+La covarianza mide la fuerza de la relación lineal entre dos variables.
+
+\[
+\LARGE
+\begin{aligned}
+S_{xy} = \frac{1}{n}\sum_{i=1}^{n}(x_i-\overline{x})(y_i-\overline{y})
+\end{aligned}
+\]
+
+\begin{itemize}
+\tightlist
+\item
+  Donde:
+\item
+  \(S_{xy}\) representa la covarianza
+\item
+  \(n\) representa el numero de datos.
+\item
+  \(x_i\) representa todo los valores de \(x\) (del 1 a n).
+\item
+  \(\overline{x}\) representa la media de x.
+\item
+  \(y_i\) representa todo los valores de \(y\) (del 1 a n).
+\item
+  \(\overline{y}\) representa la media de y.
+\end{itemize}
+
+\section{Variograma Experimental (I)}\label{variograma-experimental-i}
+
+\begin{itemize}
+\item
+  Grafica o expresión matemática que cuantifica la diferencia entre los
+  pares de las muestras para una orientación determinada.
+\item
+  Refleja la distancia máxima y la forma en que un punto tiene
+  influencia sobre otro punto a diferentes distancias.
+\end{itemize}
+
+\[
+\Large
+\begin{aligned}
+\gamma (h) = \frac{1}{2N(h)}\sum_{n=1}^{N(h)}[Z(x_i + h)-Z(x_i )]^{2}
+\end{aligned}
+\]
+
+\begin{itemize}
+\item
+  Donde:
+\item
+  \(h\) Distancia del análisis (lag).
+\item
+  \(N(h)\) número de pares de puntos a una distancia dada.
+\item
+  \(Z(x_i)\) valor de la variable de análisis en el punto \(x_i\).
+\item ~
+  \subsection{\texorpdfstring{\(Z(x_i + h)\) valor de la variable de
+  análisis en el punto \(x_i\) más una distancia \(h\)
+  dada.}{Z(x\_i + h) valor de la variable de análisis en el punto x\_i más una distancia h dada.}}\label{zx_i-h-valor-de-la-variable-de-analisis-en-el-punto-x_i-mas-una-distancia-h-dada.}
+
+  \section{Variograma Experimental
+  (II)}\label{variograma-experimental-ii}
+\end{itemize}
+
+\[
+\Large
+\begin{aligned}
+pares = \frac{n*n(-1)}{2}
+\end{aligned}
+\]
+
+\subsection[]{\texorpdfstring{\protect\includegraphics{intro_files/figure-latex/unnamed-chunk-26-1.pdf}}{}}\label{section-1}
+
+\section{Variograma Teórico}\label{variograma-teorico}
+
+\[
+\Large
+\begin{aligned}
+\gamma (h) = \frac{1}{2}E[Z(x)-Z(x+h)]^{2}
+\end{aligned}
+\]
+
+ ¿Porqué es necesario un variograma teórico?
+
+\begin{itemize}
+\tightlist
+\item
+  El variograma experimental no se puede evaluar en distancias o
+  direcciones intermedias.
+\end{itemize}
+
+ ¿Es muy dificil calcular el variograma teórico?
+
+\subsection{\texorpdfstring{Con la librería \textbf{automap} es
+prácticamente automático, para entender el algoritmo lea
+\href{http://sci-hub.tw/https://www.sciencedirect.com/science/article/pii/S0098300409000867}{esto}}{Con la librería automap es prácticamente automático, para entender el algoritmo lea esto}}\label{con-la-libreria-automap-es-practicamente-automatico-para-entender-el-algoritmo-lea-esto}
+
+\section{Modelamiento del Variograma
+(I)}\label{modelamiento-del-variograma-i}
+
+\section{Modelamiento del Variograma
+(III)}\label{modelamiento-del-variograma-iii}
+
+\section{Modelamiento del Variograma
+(V)}\label{modelamiento-del-variograma-v}
+
+\section{Modelamiento del Variograma
+(VII)}\label{modelamiento-del-variograma-vii}
+
+\section{Modelamiento del Variograma
+(IX)}\label{modelamiento-del-variograma-ix}
+
+\section{¿Como Funciona Kriging?}\label{como-funciona-kriging}
+
+\section{Kriging Explicado (II)}\label{kriging-explicado-ii}
+
+\section{Kriging Explicado (IV)}\label{kriging-explicado-iv}
+
+\section{PISCOp metodología}\label{piscop-metodologia}
+
+\section{2. Preparacion de datos}\label{preparacion-de-datos}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{datos_obs =}\StringTok{ }\NormalTok{PISCOp_raingauge_database}\OperatorTok{$}\NormalTok{unstable}\OperatorTok{$}\NormalTok{plausible[gauge_sf_g}\OperatorTok{$}\NormalTok{id]}
+\NormalTok{sp_gauge =}\StringTok{ }\KeywordTok{as}\NormalTok{(gauge_sf_g,}\StringTok{'Spatial'}\NormalTok{)}
+\NormalTok{sp_gauge}\OperatorTok{@}\NormalTok{data=}\StringTok{ }\NormalTok{datos_obs }\OperatorTok{%>%}\StringTok{ }\NormalTok{t }\OperatorTok{%>%}\StringTok{ }\NormalTok{tbl_df}
+\NormalTok{apurimac_sp =}\StringTok{ }\KeywordTok{as}\NormalTok{(apurimac,}\StringTok{'Spatial'}\NormalTok{)}
+\NormalTok{grid <-}\StringTok{ }\KeywordTok{makegrid}\NormalTok{(apurimac_sp, }\DataTypeTok{cellsize =} \FloatTok{0.1}\NormalTok{) }\CommentTok{# cellsize in map units!}
+\NormalTok{apurimac_grid <-}\StringTok{ }\KeywordTok{SpatialPoints}\NormalTok{(grid, }\DataTypeTok{proj4string =} \KeywordTok{CRS}\NormalTok{(}\KeywordTok{proj4string}\NormalTok{(apurimac_sp)))}
+\KeywordTok{gridded}\NormalTok{(apurimac_grid) =}\StringTok{ }\OtherTok{TRUE}
+\end{Highlighting}
+\end{Shaded}
+
+\section{4. Guarde los resultados}\label{guarde-los-resultados}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{stk_rain =}\StringTok{ }\NormalTok{raster}\OperatorTok{::}\KeywordTok{stack}\NormalTok{(ko_apurimac)}
+\KeywordTok{writeRaster}\NormalTok{(stk_rain[[}\DecValTok{1}\NormalTok{]],}\StringTok{"ko.tif"}\NormalTok{)}
+\KeywordTok{writeRaster}\NormalTok{(stk_rain[[}\DecValTok{2}\NormalTok{]],}\StringTok{"idw.tif"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Corrección de Productos
+Grillados}\label{correccion-de-productos-grillados}
+
+\subsection{\texorpdfstring{\emph{Nerini et
+al.,2015}}{Nerini et al.,2015}}\label{nerini-et-al.2015}
+
+\section{1. Leyendo los datos
+necesarios}\label{leyendo-los-datos-necesarios}
+
+\begin{itemize}
+\item
+  Descargamos los
+  \href{ftp://publi_dgh2:123456@ftp.senamhi.gob.pe/PISCOp_V2.1_beta/PISCOp_raingauge_database.Rdata}{datos
+  observados}
+\item
+  Descargamos
+  \href{ftp://publi_dgh2:123456@ftp.senamhi.gob.pe/PISCOp_V2.1_beta/Monthly_Products/unstable/PISCOpm/PISCOpm_V2.1.2018-08-01.tif}{PISCOpm}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# 1.1 Cargamos los datos}
+\NormalTok{Rdata =}\StringTok{ '/home/aybarpc01/Downloads/PISCOp_raingauge_database.Rdata'}
+\KeywordTok{load}\NormalTok{(Rdata)}
+\NormalTok{ana_shp =}\StringTok{ }\KeywordTok{st_read}\NormalTok{(}\StringTok{"/home/aybarpc01/Downloads/shp/UH.shp"}\NormalTok{,}\DataTypeTok{stringsAsFactors =}\NormalTok{ F)}
+\NormalTok{Rrain =}\StringTok{ }\KeywordTok{raster}\NormalTok{(}\StringTok{'/home/aybarpc01/Downloads/PISCOpm_V2.1.2018-08-01.tif'}\NormalTok{)}
+
+
+\CommentTok{# 1.2 Obtenemos información}
+\NormalTok{gauge_sf =}\StringTok{ }\KeywordTok{as}\NormalTok{(PISCOp_raingauge_database}\OperatorTok{$}\NormalTok{spatial,}\StringTok{"sf"}\NormalTok{)}
+\NormalTok{gauge_sf}\OperatorTok{$}\NormalTok{id =}\StringTok{ }\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(gauge_sf)}
+\NormalTok{position_urub =}\StringTok{ }\NormalTok{ana_shp}\OperatorTok{$}\NormalTok{NOMBRE }\OperatorTok{%in%}\StringTok{ "Intercuenca Alto Apurímac"} \OperatorTok{%>%}\StringTok{ }\NormalTok{which }
+\NormalTok{apurimac =}\StringTok{  }\NormalTok{ana_shp[position_urub,}\DecValTok{1}\NormalTok{]}
+\NormalTok{gauge_sf_g =}\StringTok{ }\KeywordTok{st_intersection}\NormalTok{(gauge_sf,}\KeywordTok{st_buffer}\NormalTok{(apurimac,}\FloatTok{0.25}\NormalTok{))}
+
+\CommentTok{# 1.3 Leemos los datos}
+\KeywordTok{plot}\NormalTok{(apurimac}\OperatorTok{$}\NormalTok{geometry,}\DataTypeTok{main=}\StringTok{'Alto Apurímac'}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(gauge_sf_g}\OperatorTok{$}\NormalTok{geometry, }\DataTypeTok{col =} \StringTok{'red'}\NormalTok{, }\DataTypeTok{add =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\section{3. Graficos y a guardar}\label{graficos-y-a-guardar}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# 3.1 Generación de ratio}
+\NormalTok{gauge_sp =}\StringTok{ }\KeywordTok{mean}\NormalTok{(sp_gauge[}\DecValTok{452}\NormalTok{]}\OperatorTok{@}\NormalTok{data[[}\DecValTok{1}\NormalTok{]])}
+\NormalTok{raster_sp =}\StringTok{ }\KeywordTok{mean}\NormalTok{(}\KeywordTok{extract}\NormalTok{(Rrain,sp_gauge))}
+\NormalTok{ratio =}\StringTok{ }\NormalTok{gauge_sp}\OperatorTok{/}\NormalTok{raster_sp}
+
+\CommentTok{# 3.2 Grafica y guarda tus resultados!}
+\NormalTok{apurimac_rain =}\StringTok{ }\KeywordTok{mask}\NormalTok{(}\KeywordTok{crop}\NormalTok{(Rrain,apurimac),apurimac) }\OperatorTok{*}\StringTok{ }\NormalTok{ratio}
+\KeywordTok{spplot}\NormalTok{(apurimac_rain)}
+\KeywordTok{writeRaster}\NormalTok{(apurimac_rain,}\StringTok{"apurimac_rain.tif"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}
